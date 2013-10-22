@@ -148,11 +148,51 @@ key "roberts2007computational"
 \end_layout
 
 \begin_layout Subsection
-Shadowgraphy
+Optical Methods
 \end_layout
 
-\begin_layout Subsection
-Photoelasticity
+\begin_layout Standard
+The translucency of the silicone material that the torso is made of can
+ be exploited.
+ Various optical methods exist to investigate the state of transparent media
+ by examining differences in light cast through the object.
+ Optical inhomogenieties alter the behavior of light passing through the
+ medium.
+ The simplest of these schemes is shadowgraphy, wherein a beam is passed
+ through the object causing an image with lightened and darkened regions
+\begin_inset CommandInset citation
+LatexCommand cite
+key "settlesschlieren"
+
+\end_inset
+
+.
+ This effect is apparent by observing the varying shadow cast by a fire.
+\end_layout
+
+\begin_layout Standard
+Photoelasticity is an experimental method that utilizes the stress varying
+ birefrigence exhibited by certain transparent solids.
+ {cite me} As light passes through such a material, it experiences two separate
+ refractive indices whose difference is dependent on the current stress
+ state, causing a ray to interfere with itself.
+ Passing polarized light through the material and then through a polarizing
+ filter, the stress state can be deduced from the resulting interference
+ patterns.
+ This method allows for detailed determinations of the stress state in complicat
+ed systems, for example in the loading of particles
+\begin_inset CommandInset citation
+LatexCommand cite
+key "rossmanith1982photoelastic"
+
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Standard
+These methods are restricted to transparent materials 
 \end_layout
 
 \begin_layout Subsection
@@ -177,13 +217,30 @@ Using visual data to acquire physical properties of subjects has long been
 \begin_layout Standard
 Work has been done in Germany testing the use of features present in the
  texture of objects rather than photogrammetric markers to an acceptable
- margin of error for crash testing (<10mm in each axis).
+ margin of error for crash testing (<10mm in each axis)
+\begin_inset CommandInset citation
+LatexCommand cite
+key "gall2008model"
+
+\end_inset
+
+.
  This system uses computer software that predicts positioning for the current
  frame by matching texture patches between the current and last frames.
- Work has also been done by the Ford Motor Company and Kineticorp in building
+\end_layout
+
+\begin_layout Standard
+Work has also been done by the Ford Motor Company and Kineticorp in building
  computer generated models of test scenarios using photogrammetric methods
  and then using the computer generated model to deduct physical properties
- of interest.
+ of interest
+\begin_inset CommandInset citation
+LatexCommand cite
+key "chou2006image"
+
+\end_inset
+
+.
  In this particular instance, pre-record roll test video was overlaid on
  a 3D Studio Max model to virtually replicate the roll test.
  Positioning data was then extracted from the model and analyzed for roll
@@ -192,7 +249,14 @@ Work has been done in Germany testing the use of features present in the
 
 \begin_layout Standard
 More specific to our mission, work has been done at Trinity University measuring
- 3D acceleration with videogrammetry.
+ 3D acceleration with videogrammetry
+\begin_inset CommandInset citation
+LatexCommand cite
+key "leifer2011three"
+
+\end_inset
+
+.
  Video from three visually synchronized cameras and commercially-available
  video software were used to locate points of interest on a modal shaker
  in 3D space.
@@ -351,7 +415,11 @@ While the resolution of the system based on the above assumptions will be
  sufficent for the first two tests (static loading and baseball impact),
  it may not be for the high velocity of the silicone bullet.
  We are hoping that because we are using a very conservative estimate of
- ⅕ of the maximum velocity, the real resolution of the system will be enough
+ 
+\begin_inset Formula $\nicefrac{1}{5}$
+\end_inset
+
+ of the maximum velocity, the real resolution of the system will be enough
  to capture high velocity impacts.
  We will be able to experimentally test the resolution of the system once
  the experimental setup has been completed.
