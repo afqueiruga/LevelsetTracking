@@ -173,9 +173,16 @@ key "settlesschlieren"
 \begin_layout Standard
 Photoelasticity is an experimental method that utilizes the stress varying
  birefrigence exhibited by certain transparent solids.
- {cite me} As light passes through such a material, it experiences two separate
- refractive indices whose difference is dependent on the current stress
- state, causing a ray to interfere with itself.
+ As light passes through such a material, it experiences two separate refractive
+ indices based on its polarization whose difference is dependent on the
+ current stress state, causing a ray to interfere with itself
+\begin_inset CommandInset citation
+LatexCommand cite
+key "ramesh2000digital"
+
+\end_inset
+
+.
  Passing polarized light through the material and then through a polarizing
  filter, the stress state can be deduced from the resulting interference
  patterns.
@@ -188,11 +195,47 @@ key "rossmanith1982photoelastic"
 \end_inset
 
 .
- 
-\end_layout
+ This technique can be used to study dynamic phenomena using high speed
+ cameras or other schemes to obtain snapshots of the fringe patterns
+\begin_inset CommandInset citation
+LatexCommand cite
+key "dally1980introduction"
 
-\begin_layout Standard
-These methods are restricted to transparent materials 
+\end_inset
+
+.
+ Photoelasticity has been used to study ballistic impact phenomena as well,
+ where the elastic wave propagation in the material can be determined
+\begin_inset CommandInset citation
+LatexCommand cite
+key "meyer1983notes"
+
+\end_inset
+
+.
+ Materials used for armored windshields were studied using both shadowgraph
+ and photoelastic techniques in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "strassburger2008high"
+
+\end_inset
+
+.
+ Because optical methods are restricted to transparent materials and pose
+ difficulties when investigating three dimensional solids, most studies
+ are restricted to model systems made from two-dimensional analogies using
+ thin photoelastic objects.
+ For example, Xu and Rosakis in 2003 the stress and fracture patterns of
+ a layered armor using an analogous system of thin Homalite struck with
+ a projectile was studied using photoelasticity with a high speed camera
+\begin_inset CommandInset citation
+LatexCommand cite
+key "xu2003experimental"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Subsection
