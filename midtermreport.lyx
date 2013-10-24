@@ -741,7 +741,7 @@ reference "fig:Shadowgraph-image-produced"
 placement H
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \begin_inset ERT
@@ -789,9 +789,10 @@ name "fig:Silicone-Specimen-and"
 \end_inset
 
 Silicone specimen (left) and makeshift shadowgraphy setup (right).
- The lightbulb is on the right of the image covered with a foil screen with
- a pinhole, a lens is propped up in the middle, and a sheet of paper is
- used as a screen on which the image of the focused beam is visible.
+ The lightbulb is on the right of the image covered with a foil sheet with
+ a pinhole to produce a point source; a lens is propped up in the middle;
+ and a sheet of paper is used as a screen on which the image of the focused
+ beam is visible.
 \end_layout
 
 \end_inset
@@ -809,7 +810,7 @@ Silicone specimen (left) and makeshift shadowgraphy setup (right).
 placement H
 wide false
 sideways false
-status collapsed
+status open
 
 \begin_layout Plain Layout
 \begin_inset ERT
@@ -886,8 +887,8 @@ name "fig:Shadowgraph-image-produced"
 Shadowgraph image of the silicone specimen produced for various stress states:
  Top left: unstressed; Top right: moderately stressed; Bottom left: highly
  stressed; Bottom right: moderately stressed on another axis.
- To emphasize, this is the image seen on the screen, not a photograph of
- the specimen itself.
+ To clarify, these are photographs of the image seen on the screen, not
+ photographs of the specimen itself.
 \end_layout
 
 \end_inset
