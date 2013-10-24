@@ -86,37 +86,25 @@ Lingmiao Wang
 \end_layout
 
 \begin_layout Section
-Motivation
+Introduction
 \end_layout
 
 \begin_layout Standard
 The UC Berkeley Non-lethal Projectiles lab has developed a simplified human
- torso model consisting of a 
-\begin_inset Formula $\approx$
-\end_inset
-
-10” diameter and 7” tall silicone block with a single piezo pressure sensor
- embedded 1” from the surface and centered along the vertical axis.
+ torso model consisting of a tall silicone block approximately 10” diameter
+ and 7” tall with a single piezo pressure sensor embedded 1” below the surface.
  The setup is currently being used to test the impact pressure of non-lethal
- silicone projectiles (fired at 
-\begin_inset Formula $\approx$
-\end_inset
-
-300ft/s).
- The goal is to transition this experimental setup to test (sports) chest
- protectors with the hope of developing a standard for chest protector validatio
-n.
- Sports such as motocross already have standard acceleration based protective
+ silicone projectiles that are fired at velocities up to 300ft/s.
+ The goal is to transition this experimental setup to test chest protectors
+ used in sports and personnel protection with the hope of developing a standard
+ for chest protector validation.
+ Sports such as motocross have standardized acceleration based protective
  gear testing methods.
- Other injury testing, such as automotive and aviation, utilize acceleration
- as the unit of measure as well.
- It is desirable to have similar acceleration data for comparison on top
- of the pressure data.
+ Other areas, such as automotive and aviation, utilize acceleration as the
+ unit of measure for injury testing as well.
+ It is desirable to have similar acceleration data for comparison in addition
+ to the pressure data.
  
-\end_layout
-
-\begin_layout Section
-Mission
 \end_layout
 
 \begin_layout Standard
@@ -126,17 +114,17 @@ Internal organ damage occurs as a result of the pressure wave that translates
  Hence, measurement of the acceleration throughout the entire body as a
  result of the pressure wave would be more informational than just surface
  acceleration.
- Our goal then is to determine a method to accurately measure the “acceleration
- wave” of a deformable silicone body from high speed impacts.
+ The goal of this work is to determine a method to accurately measure the
+ acceleration field within a deformable silicone body from high speed impacts.
  
 \end_layout
 
 \begin_layout Section
-Literature review
+Previous Work
 \end_layout
 
 \begin_layout Subsection
-Experimental Background
+Experiment Background
 \end_layout
 
 \begin_layout Standard
@@ -155,13 +143,78 @@ key "roberts2007computational"
  but do not injure, intended targets.
  The current test setup consists of a stationary valve actuated projectile
  launcher powered by a 2200 psi helium tank.
- The barrell is aimed at the center of a torso surrogate placed on a wooden
- stand roughly ___ft away from the end of the ___ft barrell.
+ The barrel is aimed at the center of a torso surrogate placed on a wooden
+ stand roughly 57” away from the end of the barrel.
  The whole system is bolted to a steel table encased in bulletproof plexiglass.
  A ProChrono Digital Chronograph is placed on a plastic stand between the
  end of the barrel and the block to measure projectile velocity.
- An ABAQUS model has been created modeling a quarter of the torso and projectile
- impacting (assumed symmetry).
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status collapsed
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+center
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename experimentsetup.jpg
+	lyxscale 50
+	width 60text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+Current Experiment Setup
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+A finite element model using ABAQUS was previously created to simulate a
+ quarter of the torso and projectile impacting
+\begin_inset CommandInset citation
+LatexCommand cite
+key "cardinali2012development"
+
+\end_inset
+
+.
  The model is currently being used to extract pressure and deflection data
  of various uniform projectiles.
  It should be noted that this model is outdated as the silicone material
@@ -190,9 +243,10 @@ key "settlesschlieren"
 
 .
  This effect is apparent by observing the varying shadow cast by a fire.
- This technique is well suited for transport phenomena (such as heat from
- a fire) in fluid media, but can also be applied to ballistics and explosives
- to determine flow patterns and shock waves
+ This technique is well suited for transport phenomena in fluid media--such
+ as the heat driven convection in the previous example--but can also be
+ applied to ballistics and explosives to determine flow patterns and shock
+ waves
 \begin_inset CommandInset citation
 LatexCommand cite
 key "biss2009high"
@@ -213,7 +267,7 @@ key "harvey1948mechanism"
 
 \begin_layout Standard
 Photoelasticity is an experimental method that utilizes the stress varying
- birefrigence exhibited by certain transparent solids.
+ birefringence exhibited by certain transparent solids.
  As light passes through such a material, it experiences two separate refractive
  indices based on its polarization whose difference is dependent on the
  current stress state, causing a ray to interfere with itself
@@ -354,12 +408,10 @@ Using visual data to acquire physical properties of subjects has long been
  difficult to accurately track objects that cover relatively small areas
  of the image (i.e.
  test dummy head).
-\end_layout
-
-\begin_layout Standard
-Work has been done in Germany testing the use of features present in the
- texture of objects rather than photogrammetric markers to an acceptable
- margin of error for crash testing (<10mm in each axis)
+ Gall et.
+ al have tested features present in the texture of objects rather than photogram
+metric markers to an acceptable margin of error for crash testing (<10mm
+ in each axis)
 \begin_inset CommandInset citation
 LatexCommand cite
 key "gall2008model"
@@ -369,10 +421,7 @@ key "gall2008model"
 .
  This system uses computer software that predicts positioning for the current
  frame by matching texture patches between the current and last frames.
-\end_layout
-
-\begin_layout Standard
-Work has also been done by the Ford Motor Company and Kineticorp in building
+ Work has also been done by the Ford Motor Company and Kineticorp in building
  computer generated models of test scenarios using photogrammetric methods
  and then using the computer generated model to deduct physical properties
  of interest
@@ -387,11 +436,8 @@ key "chou2006image"
  a 3D Studio Max model to virtually replicate the roll test.
  Positioning data was then extracted from the model and analyzed for roll
  angle and roll velocity and compared to sensor data.
-\end_layout
-
-\begin_layout Standard
-More specific to our mission, work has been done at Trinity University measuring
- 3D acceleration with videogrammetry
+ Closely related to the proposed project, 3D acceleration has been measured
+ using videogrammetry by researchers at Trinity University
 \begin_inset CommandInset citation
 LatexCommand cite
 key "leifer2011three"
@@ -457,7 +503,7 @@ Experimental Setup
 \begin_layout Standard
 The projectile firing mechanism is mounted in a plexiglass cage for safety.
  The camera will be mounted outside the cage at a viewing angle flat to
- the midplane of the block.
+ the mid plane of the block.
  External lighting will be arranged to provide optimal contrast.
  A ruler will be hung directly over the grid of beads to serve as the reference
  for our measurements.
@@ -469,11 +515,23 @@ Testing
 \end_layout
 
 \begin_layout Standard
-Three separate deformation tests will be performed: Static loading for validatio
-n- using a constant force applicator or prescribed mass system to determine
- the displacement profile of the beads in a static loading situation.
- Moderate impact speed and large mass projectile (i.e.
- baseball) High impact speed and low mass projectile (i.e.
+Three separate deformation tests will be performed: 
+\end_layout
+
+\begin_layout Enumerate
+Static loading for validation- using a constant force applicator or prescribed
+ mass system to determine the displacement profile of the beads in a static
+ loading situation.
+ 
+\end_layout
+
+\begin_layout Enumerate
+Moderate impact speed and large mass projectile (i.e.
+ baseball) 
+\end_layout
+
+\begin_layout Enumerate
+High impact speed and low mass projectile (i.e.
  silicone bullet) 
 \end_layout
 
@@ -482,9 +540,9 @@ Post Processing and Data Analysis
 \end_layout
 
 \begin_layout Standard
-We will be utilizing an existing program that will track individual bead
- displacements and automatically calculate relevant parameters.
- Alternatively, we can use video editing software such as Adobe Premiere
+The optimal option for tracking individual bead displacements and calculating
+ necessary parameters is using a self-coded program.
+ Alternatively, video editing software such as Adobe Premiere can be used
  to selectively single out frames of impact, analyze displacements, and
  perform the necessary calculations.
  
@@ -495,9 +553,9 @@ Equipment
 \end_layout
 
 \begin_layout Standard
-The camera we will be using is the Casio EXILIM Pro EX-F1.
+The camera used for high speed recording will be a Casio EXILIM Pro EX-F1.
  It is capable of capturing 60 fps at full resolution (1920x1080), 300 fps
- at 512x384, 600 fsp at 432x192, and 1200 fps at 336x96.
+ at 512x384, 600 fps at 432x192, and 1200 fps at 336x96.
  The firing equipment will be the same custom-built pressure launcher used
  in the Non-Lethal Projectiles Lab as detailed in the literature review.
  
@@ -512,19 +570,22 @@ Anticipated Results
 \end_layout
 
 \begin_layout Subsection
-Ideal 
+Considerations for Ideal Behavior
 \end_layout
 
 \begin_layout Standard
-The camera capture rate and resolution are predetermined and in the ideal
- case, we will be also be able to accurately control the position and size
- of the beads we will be tracking.
- Our end goal is to accurately capture the maximum speed of the projectile,
+The camera capture rate and resolution are predetermined.
+ Ideally, the position and size of the beads will be precisely controlled.
+ The end goal is to accurately capture the maximum speed of the projectile,
  the impact duration, projectile deformation, and the displacement of the
  beads over time.
- It is assumed that this data will then allow us to accurately deduct the
- acceleration wave moving through the torso surrogate.
- An interest field of four times the diameter of the projectile (0.75”) has
+ It is assumed that this data will then lead to an accurate deduction of
+ the acceleration wave moving through the torso surrogate.
+ 
+\end_layout
+
+\begin_layout Standard
+An interest field of four times the diameter of the projectile (0.75”) has
  been chosen as it should sufficiently span the volume of silicone that
  will deform as a result of the impacts.
  Placing 15 points of interest (aka beads) along the sensitive axis means
@@ -533,14 +594,20 @@ The camera capture rate and resolution are predetermined and in the ideal
  and human limitations.
  These beads will be centered on the half plane, the target location of
  the projectiles.
- Assuming a conservative experimental system resolution estimate of ⅕ of
- v_max (of the body), the minimum displacement we will be able to measure
- is v_max*delta_t, where t is time in seconds.
- Resolution=vmax51fps=vmaxt The baseball, traveling at 88ft/s max will result
- in a 0.18” resolution.
+ Assuming a conservative experimental system resolution estimate of one
+ fifth of the maximum maximum speed of the projectile.
+ The minimum displacement that can be measured between two frames is 
+\begin_inset Formula 
+\[
+\mathrm{Resolution}=V_{min}\times\frac{1}{FPS}=\frac{1}{5}V_{max}\times\Delta t.
+\]
+
+\end_inset
+
+The baseball, traveling at 88ft/s max will result in a 0.18” resolution.
  At this resolution, the highest fps, and with the field of interest stated
- above, we will effectively have 3-4 pixels to locate the particle (per
- pixel position error) during video processing.
+ above, there will be effectively have 3-4 pixels to locate the particle
+ (per pixel position error) during video processing.
  
 \end_layout
 
@@ -554,7 +621,7 @@ Video Capture Speed
 
 \begin_layout Standard
 While the resolution of the system based on the above assumptions will be
- sufficent for the first two tests (static loading and baseball impact),
+ sufficient for the first two tests (static loading and baseball impact),
  it may not be for the high velocity of the silicone bullet.
  We are hoping that because we are using a very conservative estimate of
  
@@ -565,7 +632,7 @@ While the resolution of the system based on the above assumptions will be
  to capture high velocity impacts.
  We will be able to experimentally test the resolution of the system once
  the experimental setup has been completed.
- If it is deemed to be insufficent, a higher resolution camera will need
+ If it is deemed to be insufficient, a higher resolution camera will need
  to be obtained in order to test the silicone bullets or the maximum speed
  reduced.
 \end_layout
@@ -591,13 +658,13 @@ Recording Angle
 \end_layout
 
 \begin_layout Standard
-Our goal is to set up the camera perpendicular to the half plane so that
- there will be no visual distortion and hence accuracy due to a titled viewing
+The camera will be set up perpendicular to the half plane so that there
+ will be no visual distortion and hence accuracy due to a titled viewing
  angle.
- We currently have no method of testing this though and hence expect a degree
- of error.
- However, if we can place the measurement axis in line with the half plane
- then positioning will be relative and we expect no extensive error.
+ There is currently no method of testing this and therefore a degree of
+ error is expected.
+ However, if the measurement axis is placed in line with the half plane
+ then positioning will be relative and error should not be extensive.
  
 \end_layout
 
@@ -607,13 +674,13 @@ Grid Spacing
 
 \begin_layout Standard
 Because of the limitations of our equipment and our own abilities, it is
- very likely that we will not be able to accurately control the spacing
- of our resultant bead grid and the individual bead sizes.
- However, we are assuming that perfect grid spacing and consistent bead
- sizing is not necessary because their positions are being tracked relative
- to each other and not in reference to an idealized mapping.
- Hence, as long as the beads are distinguishable from each other, our results
- will not be affected.
+ very likely that the spacing of our resultant bead grid and the individual
+ bead sizes will not be steady.
+ However, an operating assumption is that perfect grid spacing and consistent
+ bead sizing is not necessary because their positions are being tracked
+ relative to each other and not in reference to an idealized mapping.
+ Hence, as long as the beads are distinguishable from each other, results
+ should not be affected.
  
 \end_layout
 
