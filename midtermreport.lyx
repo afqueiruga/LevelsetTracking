@@ -64,6 +64,27 @@
 
 \begin_body
 
+\begin_layout Title
+Development and Evaluation of a Photo Based Acceleration Data Acquisition
+ System for a Human Torso Surrogate
+\end_layout
+
+\begin_layout Author
+Alejandro Queiruga
+\begin_inset Newline newline
+\end_inset
+
+Jonathan Lei
+\begin_inset Newline newline
+\end_inset
+
+Dizhou Lu
+\begin_inset Newline newline
+\end_inset
+
+Lingmiao Wang
+\end_layout
+
 \begin_layout Section
 Motivation
 \end_layout
@@ -121,13 +142,14 @@ Experimental Background
 \begin_layout Standard
 Roberts, Merkle, et al.
  present one of many research findings regarding the possible injuries that
- a human body can sustain from a non-penetrating trauma.
+ a human body can sustain from a non-penetrating trauma
 \begin_inset CommandInset citation
 LatexCommand cite
 key "roberts2007computational"
 
 \end_inset
 
+.
  The UC Berkeley Non-Lethal Projectiles Lab builds upon these findings in
  an effort to develop non-penetrating bullets that temporarily incapacitate,
  but do not injure, intended targets.
@@ -168,6 +190,25 @@ key "settlesschlieren"
 
 .
  This effect is apparent by observing the varying shadow cast by a fire.
+ This technique is well suited for transport phenomena (such as heat from
+ a fire) in fluid media, but can also be applied to ballistics and explosives
+ to determine flow patterns and shock waves
+\begin_inset CommandInset citation
+LatexCommand cite
+key "biss2009high"
+
+\end_inset
+
+.
+ Shadowgraphy was used to study ballistic damage in transparent biological
+ tissue surrogates as early as 1948 by Harvey
+\begin_inset CommandInset citation
+LatexCommand cite
+key "harvey1948mechanism"
+
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Standard
@@ -240,6 +281,64 @@ key "xu2003experimental"
 
 \begin_layout Subsection
 Digital image correlation and particle tracking
+\end_layout
+
+\begin_layout Standard
+Digital image processing can also be applied to transparent media to study
+ systems where shadowgraphic or photoelastic techniques cannot be applied.
+ A fluid field can be seeded with particles which can be tracked by a camera
+\begin_inset CommandInset citation
+LatexCommand cite
+key "westerweel1997fundamentals,cho1989digital"
+
+\end_inset
+
+.
+ The image is then post processed by a computer to determine the path of
+ the particles taken in the fluid to extract the flow pattern and velocity
+ field.
+ The same particle tracking technique has also been done without a fluid
+ media present, where the velocity fields of dry granular flows can be extracted
+ by tracking each individual particle
+\begin_inset CommandInset citation
+LatexCommand cite
+key "jasti2008experimental"
+
+\end_inset
+
+.
+ Displacement fields in solids can also be determined by image processing
+ using digital image correlation.
+ The surface texture of test objects can used to determine its displacement
+ field in order to calculate stress concentrations
+\begin_inset CommandInset citation
+LatexCommand cite
+key "roux2006stress,hild2006digital,chevalier2005digital"
+
+\end_inset
+
+.
+ The correlation method can also be used without relying on the texture
+ of a material.
+ Experimental analysis stress state of a loaded soil was preformed by selectivel
+y illuminating transparent particles along a movable laser beam and performing
+ image correlation to determine displacements in 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "sadek2003accuracy"
+
+\end_inset
+
+.
+ In 
+\begin_inset CommandInset citation
+LatexCommand cite
+key "berfield2007micro"
+
+\end_inset
+
+ the desired surfaces were sparsely painted with fluorescent microparticles
+ which could then be tracked.
 \end_layout
 
 \begin_layout Subsection
