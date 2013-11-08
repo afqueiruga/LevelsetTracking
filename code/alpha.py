@@ -26,7 +26,7 @@ old_gray = cv2.cvtColor(old_frame, cv2.COLOR_BGR2GRAY)
 # old_thresh = cv2.adaptiveThreshold(old_gray,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,\
 #                                    cv2.THRESH_BINARY,5,1)
 # old_thresh = cv2.Laplacian(old_gray,cv2.CV_64F)
-old_blur = cv2.GaussianBlur(old_gray,(10,10),0)
+old_blur = cv2.GaussianBlur(old_gray,(5,5),0)
 old_thresh = cv2.Canny(old_blur,5,50)
 p0 = cv2.goodFeaturesToTrack(old_thresh, mask = None, **feature_params)
 
@@ -50,7 +50,7 @@ while(1):
     good_old = p0[st==1]
 
     # draw the tracks
-    threshcolor=cv2.cvtColor(thresh,cv2.COLOR_GRAY2BGR)
+    threshcolor=cv2.cvtColor(blur,cv2.COLOR_GRAY2BGR)
     for i,(new,old) in enumerate(zip(good_new,good_old)):
         a,b = new.ravel()
         c,d = old.ravel()
