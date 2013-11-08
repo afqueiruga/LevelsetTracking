@@ -36,11 +36,13 @@ p0 = cv2.goodFeaturesToTrack(old_fils[1], mask=None, **feature_params)
 color=np.random.randint(0,255,(100,3))
 tracing = np.zeros_like(old_frame)
 plt.ion()
+resx,resy = old_frame.shape[0],old_frame.shape[1]
+displayer = np.zeros((resx*2,resy*2,3),dtype=old_frame.dtype)
 while 1:
     # Pull the new frame and apply our filtering to it.
     ret,frame=cap.read()
     fils = apply_filters(frame)
-    frame=fils[0]
+    # frame=fils[0]
     # Calculate the optical flow and grab good points to track
     p1, st, err = cv2.calcOpticalFlowPyrLK(old_fils[-1],fils[-1], p0, None, **lk_params)
     good_new = p1[st==1]
@@ -55,7 +57,12 @@ while 1:
         cv2.circle(fils[1], (a,b),5,color[i].tolist(),-1)
     show = cv2.add(fils[1],tracing)
     # Show the images
-    cv2.imshow('frame',fils[1])
+    displayer[0:resx,0:resy,:] = frame #cv2.cvtColor(fils[0],cv2.COLOR_GRAY2BGR)
+    displayer[resx:,0:resy,:] = show
+    displayer[0:resx,resy:,:] = cv2.cvtColor(fils[2],cv2.COLOR_GRAY2BGR)
+    displayer[resx:,resy:,:] =cv2.cvtColor(fils[3],cv2.COLOR_GRAY2BGR)
+    
+    cv2.imshow('frame',displayer)
     # plt.clf()
     # for i in xrange(4):
         # plt.subplot(2,2,i+1)
