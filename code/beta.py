@@ -5,24 +5,27 @@ import cv2
 import matplotlib.pylab as plt
 
 #Open the file
-cap = cv2.VideoCapture('small_block_movies/cylinder_vert.mov')
+cap = cv2.VideoCapture('small_block_movies/cylinder_horz.mov')
 
 # Parameters for ShiTomasi corner detection
 feature_params = dict( maxCorners = 100,
-                       qualityLevel = 0.3,
-                       minDistance = 7,
-                       blockSize = 7 )
+                       qualityLevel = 0.15,
+                       minDistance = 30,
+                       blockSize = 30 )
 # Parameters for lucas kanade optical flow
 lk_params = dict( winSize  = (15,15),
                   maxLevel = 2,
                   criteria = (cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT, 10, 0.03))
 
-
+TNUM = 2
 def apply_filters(frame):
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     flipped = cv2.flip(gray,-1)
-    blur = cv2.GaussianBlur(flipped,(5,5),0)
-    thresh = cv2.Canny(blur,5,50)
+    blur = cv2.GaussianBlur(flipped,(5,5),5)
+    # thresh = cv2.Canny(blur,5,50)
+    #thresh = cv2.adaptiveThreshold(blur,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,\
+    #        cv2.THRESH_BINARY,15,2)
+    ret,thresh = cv2.threshold(blur,0,255,cv2.THRESH_BINARY+cv2.THRESH_OTSU)
     return [gray,flipped,blur,thresh]
 
 #
@@ -30,7 +33,7 @@ def apply_filters(frame):
 #
 ret,old_frame = cap.read()
 old_fils = apply_filters(old_frame)
-p0 = cv2.goodFeaturesToTrack(old_fils[1], mask=None, **feature_params)
+p0 = cv2.goodFeaturesToTrack(old_fils[TNUM], mask=None, **feature_params)
 
 # Make a layer that we can draw pathlines on
 color=np.random.randint(0,255,(100,3))
@@ -44,7 +47,7 @@ while 1:
     fils = apply_filters(frame)
     # frame=fils[0]
     # Calculate the optical flow and grab good points to track
-    p1, st, err = cv2.calcOpticalFlowPyrLK(old_fils[-1],fils[-1], p0, None, **lk_params)
+    p1, st, err = cv2.calcOpticalFlowPyrLK(old_fils[TNUM],fils[TNUM], p0, None, **lk_params)
     good_new = p1[st==1]
     good_old = p0[st==1]
 
