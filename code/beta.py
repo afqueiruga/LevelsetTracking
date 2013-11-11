@@ -19,15 +19,28 @@ lk_params = dict( winSize  = (15,15),
 
 TNUM = 2
 def apply_filters(frame):
-    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-    blur = cv2.GaussianBlur(gray,(5,5),0)
-    # thresh = cv2.Canny(blur,5,50)
-    #thresh = cv2.adaptiveThreshold(blur,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,\
-    #        cv2.THRESH_BINARY,15,2)
-    # ret,thresh = cv2.threshold(flipped,0,255,cv2.THRESH_BINARY+cv2.THRESH_OTSU)
-    lapl = cv2.Laplacian(blur,cv2.CV_64F)
+    clipped = frame[100:400,200:500]
+    gray = cv2.cvtColor(clipped, cv2.COLOR_BGR2GRAY)
+    
+    # cv2.Canny(blur,5,50)
+    # ret,thresh_refl = cv2.threshold(blur,128,255,cv2.THRESH_TRUNC+cv2.THRESH_OTSU)
+
+    kernel = np.ones((3,3),np.uint8)
+    erosion = cv2.erode(gray,kernel,iterations = 1)
+    blur = cv2.GaussianBlur(erosion,(5,5),0)
+    thresh_refl = cv2.adaptiveThreshold(erosion,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,\
+                                        cv2.THRESH_BINARY,7,2)
+
+    erosion2 = cv2.erode(thresh_refl,kernel,iterations = 1)
+    lapl = cv2.Laplacian(erosion,cv2.CV_64F,ksize=15)
     mapped = np.uint8( 255*(lapl-np.min(lapl))/(np.max(lapl)-np.min(lapl)) )
-    return [gray,blur,mapped]
+    # mappedGE = np.uint8( 255*(lapl.clip(0))/(np.max(lapl)) )
+
+    blur2 = cv2.GaussianBlur(mapped,(5,5),0)
+
+    ret,thresh = cv2.threshold(blur2,0,255,cv2.THRESH_BINARY+cv2.THRESH_OTSU)
+    
+    return [gray,erosion,thresh_refl,erosion2]
 
 #
 # Take the first frame and initialize the tracking
@@ -42,7 +55,7 @@ p0 = cv2.goodFeaturesToTrack(old_fils[TNUM], mask=None, **feature_params)
 color=np.random.randint(0,255,(100,3))
 tracing = np.zeros_like(old_frame)
 plt.ion()
-resx,resy = old_frame.shape[0],old_frame.shape[1]
+resx,resy = old_fils[0].shape[0],old_fils[1].shape[1]
 displayer = np.zeros((resx*2,resy*2,3),dtype=old_frame.dtype)
 while 1:
     # Pull the new frame and apply our filtering to it.
@@ -63,12 +76,12 @@ while 1:
         c,d = old.ravel()
         cv2.line(tracing, (a,b),(c,d), color[i].tolist(), 2)
         cv2.circle(show, (a,b),5,color[i].tolist(),-1)
-    show = cv2.add(show,tracing)
+    # show = cv2.add(show,tracing)
     # Show the images
-    displayer[0:resx,0:resy,:] = frame #cv2.cvtColor(fils[0],cv2.COLOR_GRAY2BGR)
+    displayer[0:resx,0:resy,:] = cv2.cvtColor(fils[0],cv2.COLOR_GRAY2BGR)
     displayer[resx:,0:resy,:] = show
-    displayer[0:resx,resy:,:] = cv2.cvtColor(fils[1],cv2.COLOR_GRAY2BGR)
-    displayer[resx:,resy:,:] = cv2.cvtColor(fils[2],cv2.COLOR_GRAY2BGR)
+    displayer[0:resx,resy:,:] = cv2.cvtColor(fils[2],cv2.COLOR_GRAY2BGR)
+    displayer[resx:,resy:,:] = cv2.cvtColor(fils[3],cv2.COLOR_GRAY2BGR)
     
     cv2.imshow('frame',displayer)
     # plt.clf()
