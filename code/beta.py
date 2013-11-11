@@ -24,25 +24,34 @@ def apply_filters(frame):
     gray = cv2.cvtColor(clipped, cv2.COLOR_BGR2GRAY)
     
     # cv2.Canny(blur,5,50)
-    ret,thresh1 = cv2.threshold(gray,0,255,cv2.THRESH_BINARY+cv2.THRESH_OTSU)
+    ret,thresh1 = cv2.threshold(gray,128,255,cv2.THRESH_TOZERO_INV)
 
     kernel = np.ones((5,5),np.uint8)
     erosion = cv2.erode(gray,kernel,iterations = 1)
     blur = cv2.GaussianBlur(erosion,(5,5),0)
     thresh_refl = cv2.adaptiveThreshold(blur,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,\
-                                        cv2.THRESH_BINARY,7,1)
+                                        cv2.THRESH_BINARY,11,2)
 
-    kernel1 = np.ones((11,11),np.uint8)
-    erosion1 = cv2.morphologyEx(erosion,cv2.MORPH_BLACKHAT,kernel1,iterations = 1)
-    kernel2 = np.ones((9,9),np.uint8)
-    erosion2 = cv2.morphologyEx(erosion,cv2.MORPH_BLACKHAT,kernel2,iterations = 1)
-    kernel3 = np.ones((7,7),np.uint8)
-    erosion3 = cv2.morphologyEx(erosion,cv2.MORPH_BLACKHAT,kernel3,iterations = 1)    
+    ehist = cv2.equalizeHist(thresh1)
+    sobelx = cv2.Sobel(thresh1,cv2.CV_64F,2,0,ksize=7)
+    sobely = cv2.Sobel(thresh1,cv2.CV_64F,0,2,ksize=7)
 
+    msobelx = maprange(sobelx)
+    msobely = maprange(sobely)
+    corners = msobelx & msobely
+    
+    # kernel1 = np.ones((11,11),np.uint8)
+    # erosion1 = cv2.morphologyEx(erosion,cv2.MORPH_BLACKHAT,kernel1,iterations = 1)
+    # kernel2 = np.ones((9,9),np.uint8)
+    # erosion2 = cv2.morphologyEx(erosion,cv2.MORPH_BLACKHAT,kernel2,iterations = 1)
+    # kernel3 = np.ones((13,13),np.uint8)
+    # erosion3 = cv2.morphologyEx(erosion,cv2.MORPH_BLACKHAT,kernel3,iterations = 1)    
 
-    ret,thresh1 = cv2.threshold(erosion1,10,255,cv2.THRESH_BINARY)
-    ret,thresh2 = cv2.threshold(erosion2,10,255,cv2.THRESH_BINARY)
-    ret,thresh3 = cv2.threshold(erosion3,10,255,cv2.THRESH_BINARY)
+    # mero3 = maprange(erosion3)
+    
+    # ret,thresh1 = cv2.threshold(erosion1,10,255,cv2.THRESH_BINARY)
+    # ret,thresh2 = cv2.threshold(erosion2,10,255,cv2.THRESH_BINARY)
+    # ret,thresh3 = cv2.threshold(mero3,40,255,cv2.THRESH_BINARY)
         
     # lapl = cv2.Laplacian(erosion,cv2.CV_64F,ksize=5)
     # mapped = np.uint8( 255*(lapl-np.min(lapl))/(np.max(lapl)-np.min(lapl)) )
@@ -53,7 +62,7 @@ def apply_filters(frame):
 
     # thresh_refl2 = cv2.adaptiveThreshold(mapped,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,\
                                         # cv2.THRESH_BINARY,7,1)
-    return [gray,maprange(erosion1),maprange(erosion2),maprange(erosion3)]
+    return [gray,thresh1,ehist,msobelx]
 
 #
 # Take the first frame and initialize the tracking
@@ -61,8 +70,18 @@ def apply_filters(frame):
 ret,old_frame = cap.read()
 old_frame = cv2.flip(old_frame,-1)
 
+
 old_fils = apply_filters(old_frame)
 p0 = cv2.goodFeaturesToTrack(old_fils[TNUM], mask=None, **feature_params)
+
+
+hist = cv2.calcHist( [old_fils[0]],
+                     channels=[0], 
+                     mask=np.ones_like(old_fils[0]),
+                     histSize=[16], 
+                     ranges=[0,255] )
+plt.plot(hist)
+plt.show()
 
 # Make a layer that we can draw pathlines on
 color=np.random.randint(0,255,(100,3))
