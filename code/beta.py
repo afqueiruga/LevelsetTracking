@@ -29,16 +29,21 @@ def apply_filters(frame):
     kernel = np.ones((5,5),np.uint8)
     erosion = cv2.erode(gray,kernel,iterations = 1)
     blur = cv2.GaussianBlur(erosion,(5,5),0)
-    thresh_refl = cv2.adaptiveThreshold(blur,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,\
-                                        cv2.THRESH_BINARY,11,2)
+    # thresh_refl = cv2.adaptiveThreshold(blur,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,\
+    #                                    cv2.THRESH_BINARY,11,2)
 
-    ehist = cv2.equalizeHist(thresh1)
+    kernel_cross = np.zeros((5,5),np.uint8)
+    kernel_cross[:,2]=1; kernel_cross[2,:]=1;
+
+    erosion_cross = cv2.morphologyEx(gray,cv2.MORPH_TOPHAT,kernel_cross,iterations = 1)
+    # erosion_cross = cv2.erode(gray,kernel_cross,iterations = 2)
+    ehist = cv2.equalizeHist(gray)
     sobelx = cv2.Sobel(thresh1,cv2.CV_64F,2,0,ksize=7)
     sobely = cv2.Sobel(thresh1,cv2.CV_64F,0,2,ksize=7)
 
-    msobelx = maprange(sobelx)
-    msobely = maprange(sobely)
-    corners = msobelx & msobely
+    # msobelx = maprange(sobelx)
+    # msobely = maprange(sobely)
+    # corners = msobelx & msobely
     
     # kernel1 = np.ones((11,11),np.uint8)
     # erosion1 = cv2.morphologyEx(erosion,cv2.MORPH_BLACKHAT,kernel1,iterations = 1)
@@ -62,7 +67,7 @@ def apply_filters(frame):
 
     # thresh_refl2 = cv2.adaptiveThreshold(mapped,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,\
                                         # cv2.THRESH_BINARY,7,1)
-    return [gray,thresh1,ehist,msobelx]
+    return [gray,thresh1,ehist,erosion_cross]
 
 #
 # Take the first frame and initialize the tracking
