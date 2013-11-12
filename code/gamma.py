@@ -28,13 +28,16 @@ def apply_filters(frame):
     clipped = frame[clipy[0]:clipy[1], clipx[0]:clipx[1]]
     # Convery to grayscale
     gray = cv2.cvtColor(clipped, cv2.COLOR_BGR2GRAY)
+    # Perform one erosion iteration to close shines and grow the lines
+    kern_erode = np.ones((7,7),np.uint8)
+    erosion = cv2.erode(gray,kern_erode,iterations = 1)
     # Perform a blackhat transform
-    kernel = np.ones((13,13),np.uint8)
-    erosion = cv2.morphologyEx(gray,cv2.MORPH_BLACKHAT,kernel,iterations = 1)    
+    kern_blackhat = np.ones((13,13),np.uint8)
+    erode_blackhat = cv2.morphologyEx(erosion,cv2.MORPH_BLACKHAT,kern_blackhat,iterations = 1)
     # Rescale the range
-    mero = maprange(erosion)
+    mero = maprange(erode_blackhat)
     # Threshhold it
-    ret,thresh = cv2.threshold(mero,20,255,cv2.THRESH_BINARY)
+    ret,thresh = cv2.threshold(mero,25,255,cv2.THRESH_BINARY)
     return [gray,erosion,mero,thresh]
 
 
