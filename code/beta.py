@@ -11,14 +11,14 @@ cap = cv2.VideoCapture('small_block_movies/cylinder_horz.mov')
 feature_params = dict( maxCorners = 100,
                        qualityLevel = 0.15,
                        minDistance = 30,
-                       blockSize = 30 )
+                       blockSize = 11 )
 # Parameters for lucas kanade optical flow
 lk_params = dict( winSize  = (15,15),
                   maxLevel = 2,
                   criteria = (cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT, 10, 0.03))
 
 maprange = lambda x:np.uint8( 255*(1.0*x-np.min(x))/(1.0*np.max(x)-np.min(x)) )
-TNUM = 1
+TNUM = 2
 def apply_filters(frame):
     clipped = frame[100:400,200:500]
     gray = cv2.cvtColor(clipped, cv2.COLOR_BGR2GRAY)
@@ -49,15 +49,16 @@ def apply_filters(frame):
     # erosion1 = cv2.morphologyEx(erosion,cv2.MORPH_BLACKHAT,kernel1,iterations = 1)
     # kernel2 = np.ones((9,9),np.uint8)
     # erosion2 = cv2.morphologyEx(erosion,cv2.MORPH_BLACKHAT,kernel2,iterations = 1)
-    # kernel3 = np.ones((13,13),np.uint8)
-    # erosion3 = cv2.morphologyEx(erosion,cv2.MORPH_BLACKHAT,kernel3,iterations = 1)    
+    kernel3 = np.ones((13,13),np.uint8)
+    erosion3 = cv2.morphologyEx(erosion,cv2.MORPH_BLACKHAT,kernel3,iterations = 1)    
 
-    # mero3 = maprange(erosion3)
-    
+    mero3 = maprange(erosion3)
+
+
     # ret,thresh1 = cv2.threshold(erosion1,10,255,cv2.THRESH_BINARY)
     # ret,thresh2 = cv2.threshold(erosion2,10,255,cv2.THRESH_BINARY)
-    # ret,thresh3 = cv2.threshold(mero3,40,255,cv2.THRESH_BINARY)
-        
+    ret,thresh3 = cv2.threshold(mero3,20,255,cv2.THRESH_BINARY)
+    
     # lapl = cv2.Laplacian(erosion,cv2.CV_64F,ksize=5)
     # mapped = np.uint8( 255*(lapl-np.min(lapl))/(np.max(lapl)-np.min(lapl)) )
     # mapped = np.uint8( 255*(lapl.clip( 0.5*(np.max(lapl)+np.min(lapl)) ))/(np.max(lapl)) )
@@ -67,7 +68,7 @@ def apply_filters(frame):
 
     # thresh_refl2 = cv2.adaptiveThreshold(mapped,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,\
                                         # cv2.THRESH_BINARY,7,1)
-    return [gray,thresh1,ehist,erosion_cross]
+    return [gray,thresh1,thresh3,mero3]
 
 #
 # Take the first frame and initialize the tracking
@@ -102,17 +103,17 @@ while 1:
     fils = apply_filters(frame)
     # frame=fils[0]
     # Calculate the optical flow and grab good points to track
-    # p1, st, err = cv2.calcOpticalFlowPyrLK(old_fils[TNUM],fils[TNUM], p0, None, **lk_params)
-    # good_new = p1[st==1]
-    # good_old = p0[st==1]
+    p1, st, err = cv2.calcOpticalFlowPyrLK(old_fils[TNUM],fils[TNUM], p0, None, **lk_params)
+    good_new = p1[st==1]
+    good_old = p0[st==1]
 
     # Draw the pathlines
-    show = cv2.cvtColor(fils[1],cv2.COLOR_GRAY2BGR)
-    # for i,(new,old) in enumerate(zip(good_new,good_old)):
-    #     a,b = new.ravel()
-    #     c,d = old.ravel()
-    #     cv2.line(tracing, (a,b),(c,d), color[i].tolist(), 2)
-    #     cv2.circle(show, (a,b),5,color[i].tolist(),-1)
+    show = cv2.cvtColor(fils[TNUM],cv2.COLOR_GRAY2BGR)
+    for i,(new,old) in enumerate(zip(good_new,good_old)):
+        a,b = new.ravel()
+        c,d = old.ravel()
+        cv2.line(tracing, (a,b),(c,d), color[i].tolist(), 2)
+        cv2.circle(show, (a,b),5,color[i].tolist(),-1)
     # show = cv2.add(show,tracing)
     # Show the images
     displayer[0:resx,0:resy,:] = cv2.cvtColor(fils[0],cv2.COLOR_GRAY2BGR)
@@ -131,7 +132,7 @@ while 1:
     if k == 27:
         break
     # Save the state
-    old_fils = fils
+    # old_fils = fils
     # p0 = good_new.reshape(-1,1,2)
 
 cv2.destroyAllWindows()
