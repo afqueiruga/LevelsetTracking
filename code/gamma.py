@@ -10,7 +10,7 @@ import matplotlib.pylab as plt
 #
 cap = cv2.VideoCapture('small_block_movies/cylinder_horz.mov')
 TNUM = 2
-clipy = (100,400)
+clipy = (100,350)
 clipx = (200,500)
 
 
@@ -38,7 +38,15 @@ def apply_filters(frame):
     mero = maprange(erode_blackhat)
     # Threshhold it
     ret,thresh = cv2.threshold(mero,25,255,cv2.THRESH_BINARY)
-    return [gray,erosion,mero,thresh]
+
+    dilate_thresh = cv2.dilate(thresh,kern_erode,iterations = 1)
+    
+    dist_transform = cv2.distanceTransform(dilate_thresh,cv2.cv.CV_DIST_L1,5)
+    mdt = maprange(dist_transform)
+
+    # isolate = mdt & erode_thresh
+    
+    return [erosion,thresh,dilate_thresh,mdt]
 
 
 #
@@ -52,7 +60,7 @@ old_fils = apply_filters(old_frame)
 # Grab the resolution
 resy,resx = old_fils[0].shape[0],old_fils[1].shape[1]
 # Make a buffer to display a 2x2 grid of filters.
-displayer = np.zeros((resx*2,resy*2,3),dtype=old_frame.dtype)
+displayer = np.zeros((resy*2,resx*2,3),dtype=old_frame.dtype)
 
 
 #
@@ -71,10 +79,10 @@ while 1:
     for i in xrange(len(fils)):
         fils[i] = cv2.cvtColor(fils[i],cv2.COLOR_GRAY2BGR)
     # Copy onto the window frame
-    displayer[0:resx,0:resy,:] = fils[0]
-    displayer[resx:,0:resy,:] = fils[1]
-    displayer[0:resx,resy:,:] = fils[2]
-    displayer[resx:,resy:,:] = fils[3]
+    displayer[0:resy,0:resx,:] = fils[0]
+    displayer[resy:,0:resx,:] = fils[1]
+    displayer[0:resy,resx:,:] = fils[2]
+    displayer[resy:,resx:,:] = fils[3]
     # Display
     cv2.imshow('frame',displayer)
     # Do some event handling even though I just ^C it...
