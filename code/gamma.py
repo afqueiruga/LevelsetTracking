@@ -10,7 +10,7 @@ import matplotlib.pylab as plt
 #
 cap = cv2.VideoCapture('small_block_movies/cylinder_horz.mov')
 TNUM = 2
-clipy = (100,350)
+clipy = (100,300)
 clipx = (200,500)
 
 
@@ -20,6 +20,9 @@ clipx = (200,500)
 maprange = lambda x:np.uint8( 255*(1.0*x-np.min(x))/(1.0*np.max(x)-np.min(x)) )
 
 
+kern_cross = np.zeros((13,13),np.uint8)
+kern_cross[:,3]=1; kern_cross[3,:]=1;
+
 #
 # Routine to apply the set of filters we want to a frame.
 #
@@ -28,25 +31,33 @@ def apply_filters(frame):
     clipped = frame[clipy[0]:clipy[1], clipx[0]:clipx[1]]
     # Convery to grayscale
     gray = cv2.cvtColor(clipped, cv2.COLOR_BGR2GRAY)
+
+    # --OR-- Blur and threshhold
+    blur = cv2.GaussianBlur(gray,(5,5),0)
+    ret,thresh_shine = cv2.threshold(blur,178,255,cv2.THRESH_TRUNC)
     # Perform one erosion iteration to close shines and grow the lines
     kern_erode = np.ones((7,7),np.uint8)
-    erosion = cv2.erode(gray,kern_erode,iterations = 1)
+    erosion = cv2.erode(thresh_shine,kern_erode,iterations = 1)
+
+    ret,thresh_ero = cv2.threshold(erosion,140,255,cv2.THRESH_BINARY)
+
+    
     # Perform a blackhat transform
     kern_blackhat = np.ones((13,13),np.uint8)
-    erode_blackhat = cv2.morphologyEx(erosion,cv2.MORPH_BLACKHAT,kern_blackhat,iterations = 1)
+    erode_blackhat = cv2.morphologyEx(thresh_shine,cv2.MORPH_BLACKHAT,kern_blackhat,iterations = 1)
     # Rescale the range
     mero = maprange(erode_blackhat)
     # Threshhold it
-    ret,thresh = cv2.threshold(mero,25,255,cv2.THRESH_BINARY)
+    ret,thresh_mero = cv2.threshold(mero,25,255,cv2.THRESH_BINARY)
 
-    dilate_thresh = cv2.dilate(thresh,kern_erode,iterations = 1)
+    dilate_thresh = cv2.dilate(thresh_mero,kern_cross,iterations = 1)
     
     dist_transform = cv2.distanceTransform(dilate_thresh,cv2.cv.CV_DIST_L1,5)
     mdt = maprange(dist_transform)
 
     # isolate = mdt & erode_thresh
     
-    return [erosion,thresh,dilate_thresh,mdt]
+    return [thresh_shine,erosion,thresh_ero,mdt]
 
 
 #
