@@ -26,6 +26,14 @@ clipx = (75,-1)
 flipit = False
 writevid = True
 
+# The corner parameters, CCW from top left
+corners = [ [20,80], [80,80], [80,150], [20,150] ]
+NY,NX = 4,5
+points = []
+# Search radius, i.e. max a point can move
+radius = 5
+
+
 #
 # Routine to rescale an image to grayscale.
 #
@@ -52,8 +60,54 @@ def apply_filters(frame):
     thresh2 = cv2.adaptiveThreshold(phi2gray,255,cv2.ADAPTIVE_THRESH_MEAN_C,\
                                         cv2.THRESH_BINARY,31,3)
     lvl2 = LS.makephi(thresh2)
+    
     lvl22gray = maprange(lvl2)
-    return [gray,thresh2,lvl22gray,phi2gray]
+    return [gray,thresh2,lvl22gray,phi2gray, lvl2]
+
+
+def find_new_minimum(lvl, pt, rad):
+    """
+    Look for a new minimum in radius from pt on the lvl
+    """
+    limy = (max(int(pt[0]-rad),0),min(int(pt[0]+rad),lvl.shape[0]))
+    limx = (max(int(pt[1]-rad),0),min(int(pt[1]+rad),lvl.shape[1]) )
+    view = lvl[limy[0]:limy[1], limx[0]:limx[1]]
+
+    loc = np.argmin(view)
+    uri = np.unravel_index(loc,view.shape)
+    return (limy[0]+uri[0],limx[0]+uri[1])
+
+
+def update_points(lvl,points,rad):
+    for x in xrange(len(points)):
+        for y in xrange(len(points[x])):
+            points[x][y] = find_new_minimum(lvl,points[x][y],rad)
+    return points
+
+
+def locate_initial_points(corners,ny,nx):
+    """
+    Find the first batch of points
+    """
+    xtop = np.linspace(corners[0][0],corners[1][0],ny)
+    ytop = np.linspace(corners[0][1],corners[1][1],ny)
+    xbot = np.linspace(corners[3][0],corners[2][0],ny)
+    ybot = np.linspace(corners[3][1],corners[2][1],ny)
+    
+    points = []
+    for i in xrange(ny):
+        xs = np.linspace(xtop[i],xbot[i],nx)
+        ys = np.linspace(ytop[i],ybot[i],nx)
+        points.append( zip(xs,ys) )
+    return points
+
+
+def draw_points(img, points):
+    for x in xrange(len(points)):
+        for y in xrange(len(points[x])):
+            cv2.circle(img,(int(points[x][y][1]),int(points[x][y][0])),
+                       2,(255,255,0),-1)
+    
 
 
 
@@ -65,6 +119,9 @@ old_frame = cv2.flip(old_frame,-1) if flipit else old_frame
 
 old_fils = apply_filters(old_frame)
 
+points = locate_initial_points(corners,NY,NX)
+points = update_points(old_fils[4], points, radius)
+
 # Grab the resolution
 resy,resx = old_fils[0].shape[0],old_fils[1].shape[1]
 # Make a buffer to display a 2x2 grid of filters.
@@ -74,6 +131,7 @@ if writevid:
     video = cv2.VideoWriter('video.mjpeg',cv2.cv.CV_FOURCC('M','J','P','G'),
                             1,(2*resx,2*resy),1)
     print video.isOpened()
+
 
 #
 # Loop through the movie
@@ -85,13 +143,15 @@ while 1:
         break
     frame = cv2.flip(frame,-1)  if flipit else frame
     fils = apply_filters(frame)
-
+    points = update_points(fils[4], points, radius)
+    
     # 
     # Display the frames
     #
     # Convert to color
     for i in xrange(4):
         fils[i] = cv2.cvtColor(fils[i],cv2.COLOR_GRAY2BGR)
+    draw_points(fils[0],points)
     # Copy onto the window frame
     displayer[0:resy,0:resx,:] = fils[0]
     displayer[resy:,0:resx,:] = fils[1]
