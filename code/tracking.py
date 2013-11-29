@@ -22,8 +22,9 @@ import levelset as LS
 cap = cv2.VideoCapture('baseball/fast_deep.mov')
 TNUM = 2
 clipy = (0,-1)
-clipx = (0,-1)
+clipx = (75,-1)
 flipit = False
+writevid = True
 
 #
 # Routine to rescale an image to grayscale.
@@ -42,10 +43,17 @@ def apply_filters(frame):
     # Do a de-noisening step
     blur1 = cv2.GaussianBlur(gray,(3,3),0)
     # ret,thresh = cv2.threshold(blur,100,255,cv2.THRESH_BINARY)
+    # Apative threshhold
     thresh1 = cv2.adaptiveThreshold(blur1,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,\
-                                        cv2.THRESH_BINARY,15,1)
-    
-    return [gray,thresh1,thresh1,thresh1]
+                                        cv2.THRESH_BINARY,35,3)
+    # Do a levelset filter
+    threshls,phi = LS.levelsetPhase(np.array(gray,dtype=np.double),[[-0.5,0.5,160]])
+    phi2gray = maprange(phi)
+    thresh2 = cv2.adaptiveThreshold(phi2gray,255,cv2.ADAPTIVE_THRESH_MEAN_C,\
+                                        cv2.THRESH_BINARY,31,3)
+    lvl2 = LS.makephi(thresh2)
+    lvl22gray = maprange(lvl2)
+    return [gray,thresh2,lvl22gray,phi2gray]
 
 
 
@@ -62,10 +70,10 @@ resy,resx = old_fils[0].shape[0],old_fils[1].shape[1]
 # Make a buffer to display a 2x2 grid of filters.
 displayer = np.zeros((resy*2,resx*2,3),dtype=old_frame.dtype)
 
-video = cv2.VideoWriter('video.mjpeg',cv2.cv.CV_FOURCC('M','J','P','G'),
-                        1,(2*resx,2*resy),1)
-
-print video.isOpened()
+if writevid:
+    video = cv2.VideoWriter('video.mjpeg',cv2.cv.CV_FOURCC('M','J','P','G'),
+                            1,(2*resx,2*resy),1)
+    print video.isOpened()
 
 #
 # Loop through the movie
@@ -95,9 +103,11 @@ while 1:
     k = cv2.waitKey(30) & 0xff
     if k == 27:
         break
-    video.write(displayer)
+    if writevid:
+        video.write(displayer)
 
 # Clean up
 cv2.destroyAllWindows()
 cap.release()
-video.release()
+if writevid:
+    video.release()

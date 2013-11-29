@@ -6,13 +6,14 @@
 #define real double
 #endif
 
+#define RX (lda)
+#define PMN(m,n) ( (m)*RX+(n) )
+#define H0 (1.0)
+#define H1 (1.0)
 
 void dphidt(real * p, real * dp, int ny, int nx, int lda,
 	    real A, real eps) {
-  #define RX (lda)
-  #define PMN(m,n) ( (m)*RX+(n) )
-  #define H0 (1.0)
-  #define H1 (1.0)
+  
   #define NP0 (ny)
   #define NP1 (nx)
   for(int m=1; m<NP0-1; m++) {
@@ -36,15 +37,15 @@ void dphidt(real * p, real * dp, int ny, int nx, int lda,
   }
 }
 
-void curvature_filter(real * p, real * dp, int ny, int nx, int lda 
+void curvature_filter(real * p, real * dp, int ny, int nx, int lda,
 		      int npass, real A, real eps) {
   real DT = 0.02;
   for(int t=0;t<npass;t++) {
-    dphidt((real*)imgarray,(real*)didt,A,eps);
+    dphidt((real*)p,(real*)dp, ny,nx,lda, A,eps);
     for(int y=1; y<ny-1;y++) {
       for(int x=1;x<nx-1;x++) {
 	/* printf("%e\n",didt[y][x]); */
-	imgarray[y][x] += DT*didt[y][x];
+	p[PMN(y,x)] += DT*dp[PMN(y,x)];
       }
     }
   }
