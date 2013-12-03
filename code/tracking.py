@@ -9,29 +9,33 @@ UCB November 2013
 """
 
 import copy
+import cPickle as pickle
 
 import numpy as np
 import cv2
 import matplotlib.pylab as plt
 
 import levelset as LS
-
 from detect_local_minima import detect_local_minima
 
 #
 # Set up and Parameters
 #
-cap = cv2.VideoCapture('baseball/fast_deep.mov')
+
+cap = cv2.VideoCapture('medium_block_movies/static_small_end.mov')
+# The corner parameters, CCW from top left
+#corners = [ [20,70], [80,70], [80,150], [20,150] ]
+#NY,NX = 4,5
+corners = [ [70,110], [180,110], [180,180], [70,180] ]
+NY,NX = 6,5
+points = [ [ (30,70) ] ]
+clipy = (80,-120)
+clipx = (200,-140)
+
 TNUM = 2
-clipy = (0,-10)
-clipx = (75,-10)
 flipit = False
 writevid = True
 
-# The corner parameters, CCW from top left
-corners = [ [20,80], [80,80], [80,150], [20,150] ]
-NY,NX = 4,5
-points = [ [ (60,100) ] ]
 # Search radius, i.e. max a point can move
 radius = 5
 
@@ -40,6 +44,10 @@ radius = 5
 # Routine to rescale an image to grayscale.
 #
 maprange = lambda x:np.uint8( 255*(1.0*x-np.min(x))/(1.0*np.max(x)-np.min(x)) )
+
+w_cross = 5
+kern_cross = np.zeros((w_cross,w_cross),np.uint8)
+kern_cross[:,w_cross/2]=1; kern_cross[w_cross/2,:]=1;
 
 
 def apply_filters(frame):
@@ -54,12 +62,16 @@ def apply_filters(frame):
     blur1 = cv2.GaussianBlur(gray,(5,5),0)
     # ret,thresh = cv2.threshold(blur,100,255,cv2.THRESH_BINARY)
     # Apative threshhold
-    thresh1 = cv2.adaptiveThreshold(blur1,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,\
-                                        cv2.THRESH_BINARY,25,2)
+    thresh1 = cv2.adaptiveThreshold(blur1,255,cv2.ADAPTIVE_THRESH_MEAN_C,\
+                                        cv2.THRESH_BINARY,35,2)
+    
+    # Perform one erosion iteration to close shines and grow the lines
+    #erosion = cv2.erode(thresh1,kern_cross,iterations = 1)
+
     # Do a levelset filter
     #threshls,phi = LS.levelsetPhase(np.array(gray,dtype=np.double),[[-0.5,2.5,50]])
     phi1 = LS.makephi(thresh1)
-    threshls,phi = LS.levelsetPhase(phi1,[[-0.5,4.5,70]])
+    threshls,phi = LS.levelsetPhase(phi1,[[-1.0,0.0,30],[0.0,3.0,15]])
     phi2gray = maprange(phi)
     #thresh2 = cv2.adaptiveThreshold(phi2gray,255,cv2.ADAPTIVE_THRESH_MEAN_C,\
     #                                    cv2.THRESH_BINARY,31,3)
@@ -88,7 +100,7 @@ def update_points(lvl,points,rad):
     """
     for x in xrange(len(points)):
         for y in xrange(len(points[x])):
-            points[x][y] = find_new_minimum(lvl,points[x][y],rad)
+            points[x][y] = find_new_points_from_trials(lvl,points[x][y],rad)
     return points
 
 
@@ -111,10 +123,76 @@ def locate_initial_points(corners,ny,nx):
 
 def draw_points(img, points):
     for x in xrange(len(points)):
+        for y in xrange(len(points[x])-1):
+            cv2.line(img, (int(points[x][y][1]),int(points[x][y][0])),
+                     (int(points[x][y+1][1]),int(points[x][y+1][0])),
+                     (0,0,255),1)
+    for x in xrange(len(points)-1):
+        for y in xrange(len(points[x])):
+            cv2.line(img, (int(points[x][y][1]),int(points[x][y][0])),
+                     (int(points[x+1][y][1]),int(points[x+1][y][0])),
+                     (0,0,255),1)
+    for x in xrange(len(points)):
         for y in xrange(len(points[x])):
             cv2.circle(img,(int(points[x][y][1]),int(points[x][y][0])),
                        2,(255,255,0),-1)
     
+
+def find_possible_points(lvl, pt, rad):
+    limy = (max(int(pt[0]-rad),0),min(int(pt[0]+rad),lvl.shape[0]))
+    limx = (max(int(pt[1]-rad),0),min(int(pt[1]+rad),lvl.shape[1]) )
+    view = lvl[limy[0]:limy[1], limx[0]:limx[1]]
+    
+    
+    neighborret = detect_local_minima(view)
+    vals = view[neighborret]
+    mins=np.where(vals == vals.min())
+    neighbors = np.array([neighborret[0][mins]+limy[0],
+                          neighborret[1][mins]+limx[0],
+                          vals[mins]]).T
+    return neighbors
+
+def find_new_points_from_trials(lvl, pt, rad):
+    """
+    Look for a new minimum in radius from pt on the lvl.
+    """
+    limy = (max(int(pt[0]-rad),0),min(int(pt[0]+rad),lvl.shape[0]))
+    limx = (max(int(pt[1]-rad),0),min(int(pt[1]+rad),lvl.shape[1]) )
+    view = lvl[limy[0]:limy[1], limx[0]:limx[1]]
+    
+    
+    neighborret = detect_local_minima(view)
+    vals = view[neighborret]
+    mins=np.where(vals == vals.min())
+    neighbors = np.array([neighborret[0][mins]+limy[0],
+                          neighborret[1][mins]+limx[0],
+                          vals[mins]]).T
+    #print len(neighbors)
+    closest = neighbors[0]
+    #print pt
+    #print neighbors
+    mindist = (pt[0]-closest[0])**2 + (pt[1]-closest[1])**2
+    for i in xrange(1,len(neighbors)):
+        dist = (pt[0]-neighbors[i][0])**2 + (pt[1]-neighbors[i][1])**2
+        if dist<mindist:
+            closest = neighbors[i]
+            mindist = dist
+    #print closest
+    return (closest[0],closest[1])
+
+
+def find_all_new_points(lvl, points, rad):
+    # Build list of all posiilities...
+    trials = []
+    for x in xrange(len(points)):
+        trials.append([])
+        for y in xrange(len(points[x])):
+            trials[x].append(find_possible_points(lvl,points[x][y],rad))
+    # Evaluate all the possible potentials...
+    
+    print trials
+    pass
+
 def draw_trials(img,lvl, pt,rad):
     """
     Look for a new minimum in radius from pt on the lvl.
@@ -126,8 +204,8 @@ def draw_trials(img,lvl, pt,rad):
     
     neighborret = detect_local_minima(view)
     neighbors = np.array([neighborret[0],neighborret[1],view[neighborret]]).T
-    print neighbors.
-    print len(neighbors)
+    #print neighbors
+    #print len(neighbors)
     for p in neighbors:
         cv2.circle(img,(limx[0]+int(p[1]),limy[0]+int(p[0])),
                        2,(0,0,255),-1)
@@ -143,7 +221,7 @@ old_frame = cv2.flip(old_frame,-1) if flipit else old_frame
 
 old_fils = apply_filters(old_frame)
 
-#points = locate_initial_points(corners,NY,NX)
+points = locate_initial_points(corners,NY,NX)
 points = update_points(old_fils[4], points, radius)
 
 # Grab the resolution
@@ -168,6 +246,7 @@ while 1:
     frame = cv2.flip(frame,-1)  if flipit else frame
     fils = apply_filters(frame)
     points = update_points(fils[4], points, radius)
+    #find_all_new_points(fils[4],points,radius)
     pointhistory.append( copy.deepcopy(points) )
     # 
     # Display the frames
@@ -176,7 +255,7 @@ while 1:
     for i in xrange(4):
         fils[i] = cv2.cvtColor(fils[i],cv2.COLOR_GRAY2BGR)
     draw_points(fils[0],points)
-    draw_trials(fils[0],fils[4],points[0][0],radius)
+    #draw_trials(fils[0],fils[4],points[0][0],radius)
     # Copy onto the window frame
     displayer[0:resy,0:resx,:] = fils[0]
     displayer[resy:,0:resx,:] = fils[1]
@@ -191,6 +270,8 @@ while 1:
     if writevid:
         video.write(displayer)
 
+
+pickle.dump( pointhistory, open("pointhistory.p","wb"))
 # Clean up
 cv2.destroyAllWindows()
 cap.release()
