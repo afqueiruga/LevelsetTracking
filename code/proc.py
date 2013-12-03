@@ -13,6 +13,7 @@ pointhistory = pickle.load( open("pointhistory.p","rb") )
 NTIME = len(pointhistory)
 NY = len(pointhistory[0])
 NX = len(pointhistory[0][0])
+FPS = 1200.0
 
 print NTIME, NY, NX
 
@@ -36,11 +37,39 @@ def animate():
     for ph in pointhistory:
         print "yo"
         plt.clf()
-        plt.xlim(80,200)
-        plt.ylim(20,200)
+        plt.xlim(20,160)
+        plt.ylim(0,140)
         plot_grid(ph)
         plt.draw()
+def motion_history(history, y,x):
+    #fil = lambda x: np.convolve(x,np.ones(10)/10)
+    fil = lambda x: sig.wiener(x,mysize=7)
+    uy,ux = extract_point(history, y,x)
+    #uy = np.convolve(uy, np.ones(10)/10)
+    #ux = np.convolve(ux, np.ones(10)/10)
+    uy = fil(uy)
+    ux = fil(ux)
+    print len(uy)
+    vy = fil(np.diff(uy))/FPS
+    vx = fil(np.diff(ux))/FPS
 
+    ay = fil(np.diff(uy,2))/(FPS**2)
+    ax = fil(np.diff(ux,2))/(FPS**2)
+    print len(vx)
+    print len(ax)
+    plt.close('all')
+    plt.xlabel('Time (s)')
+    plt.ylabel('Position (pixels)')
+    plt.plot(np.arange(len(uy))/FPS,ux)
+    plt.figure()
+    plt.xlabel('Time (s)')
+    plt.ylabel('Velocity (px/s)')
+    plt.plot(np.arange(len(vy))/FPS+0.5/FPS,vx)
+    plt.figure()
+    plt.xlabel('Time (s)')
+    plt.ylabel('Acceleration (px/s^2)')
+    plt.plot(np.arange(len(ay))/FPS+1.0/FPS,ax)
+    plt.show()
 def strain_history(history, y,x):
     plt.close('all')
     uy0,ux0 = extract_point(history, y,x)

@@ -22,15 +22,21 @@ from detect_local_minima import detect_local_minima
 # Set up and Parameters
 #
 
-cap = cv2.VideoCapture('medium_block_movies/static_small_end.mov')
+
 # The corner parameters, CCW from top left
+#cap = cv2.VideoCapture('baseball/fast_deep.mov')
 #corners = [ [20,70], [80,70], [80,150], [20,150] ]
+#clipy = (0,-1)
+#clipx = (75,-1)
 #NY,NX = 4,5
+cap = cv2.VideoCapture('medium_block_movies/static_small_end.mov')
 corners = [ [70,110], [180,110], [180,180], [70,180] ]
-NY,NX = 6,5
-points = [ [ (30,70) ] ]
 clipy = (80,-120)
 clipx = (200,-140)
+NY,NX = 6,5
+
+points = [ [ (30,70) ] ]
+
 
 TNUM = 2
 flipit = False
