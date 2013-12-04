@@ -65,6 +65,18 @@ Digital Image Deformation Tracking via the Level Set Method
 \end_layout
 
 \begin_layout BeginFrame
+Image Processing
+\end_layout
+
+\begin_layout Itemize
+Tracking program written in Python using OpenCV and SciPy
+\end_layout
+
+\begin_layout Itemize
+Custom levelset filter written in C
+\end_layout
+
+\begin_layout BeginFrame
 The Level-Set Method
 \end_layout
 
@@ -225,8 +237,8 @@ F\left|\nabla\phi\right|=\max\left(F,0\right)\nabla_{ij}^{+}+\min\left(F,0\right
 where the winded gradient magnitudes are evaluated by
 \begin_inset Formula 
 \begin{eqnarray*}
-\nabla_{ij}^{+} & = & \sqrt{\max\left(D_{x}^{-},0\right)^{2}+\min\left(D_{x}^{+},0\right)^{2}+\max\left(D_{y}^{-},0\right)^{2}+\min\left(D_{y}^{+},0\right)^{2}}\\
-\nabla_{ij}^{-} & = & \sqrt{\min\left(D_{x}^{-},0\right)^{2}+\max\left(D_{x}^{+},0\right)^{2}+\min\left(D_{y}^{-},0\right)^{2}+\max\left(D_{y}^{+},0\right)^{2}}
+\nabla_{ij}^{+}=\sqrt{\max\left(D_{x}^{-},0\right)^{2}+\min\left(D_{x}^{+},0\right)^{2}+\max\left(D_{y}^{-},0\right)^{2}+\min\left(D_{y}^{+},0\right)^{2}}\\
+\nabla_{ij}^{-}=\sqrt{\min\left(D_{x}^{-},0\right)^{2}+\max\left(D_{x}^{+},0\right)^{2}+\min\left(D_{y}^{-},0\right)^{2}+\max\left(D_{y}^{+},0\right)^{2}}
 \end{eqnarray*}
 
 \end_inset
@@ -248,7 +260,303 @@ Image Processing with the Level Set
 
 \begin_layout Standard
 For image processing, the pixels are the points of the finite difference
- scheme!
+ scheme.
+\end_layout
+
+\begin_layout Standard
+Create a binary imager using a threshhold operation and create the levelset
+ from the contour.
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+center{
+\end_layout
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename binary.png
+	lyxscale 30
+	width 50text%
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename phi.png
+	lyxscale 30
+	width 50text%
+
+\end_inset
+
+
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout BeginFrame
+Using the Level Set to Track Features
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+center{
+\end_layout
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename surfaceplot.png
+	lyxscale 30
+	width 80text%
+
+\end_inset
+
+
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The lines are ridges in the level set, and the intersections are maxima!
+\end_layout
+
+\begin_layout BeginFrame
+Code outline
+\end_layout
+
+\begin_layout Enumerate
+Open video and initialize point data 
+\end_layout
+
+\begin_layout Enumerate
+For each frame:
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+Convert frame to gray scale and compute binary image adaptive threshold
+\end_layout
+
+\begin_layout Enumerate
+Compute levelset function on contour
+\end_layout
+
+\begin_layout Enumerate
+Apply curvature filter to levelset and recompute binary image
+\end_layout
+
+\begin_layout Enumerate
+Recompute levelset on filtered binary image
+\end_layout
+
+\begin_layout Enumerate
+For each point we are tracking:
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+Locate all the local maxima within a search radius
+\end_layout
+
+\begin_layout Enumerate
+Pick the closest one as the new value
+\end_layout
+
+\end_deeper
+\end_deeper
+\begin_layout Enumerate
+Save video of filters and dump history of points
+\end_layout
+
+\begin_layout BeginFrame
+Results for Static Testing
+\end_layout
+
+\begin_layout Standard
+Show movie
+\end_layout
+
+\begin_layout Standard
+With multiple points, can compute strains
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+center{
+\end_layout
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename static_yposition.png
+	lyxscale 30
+	width 50text%
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename static_strain.png
+	lyxscale 30
+	width 50text%
+
+\end_inset
+
+
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout BeginFrame
+Results for Baseball Shots
+\end_layout
+
+\begin_layout Standard
+Show movie
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+center{
+\end_layout
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename xposition.png
+	lyxscale 30
+	width 50text%
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename xvelocity.png
+	lyxscale 30
+	width 50text%
+
+\end_inset
+
+
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+center{
+\end_layout
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename xacceleration.png
+	lyxscale 30
+	width 50text%
+
+\end_inset
+
+
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Differentiation adds noise to a signal, even after filtering
+\end_layout
+
+\begin_layout BeginFrame
+Conclusions
+\end_layout
+
+\begin_layout Enumerate
+Need a better camera with faster framerate and higher resolution
+\end_layout
+
+\begin_layout Enumerate
+Implement more robust feature locator that can recover from getting lost
 \end_layout
 
 \begin_layout EndFrame

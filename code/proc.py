@@ -8,7 +8,7 @@ import numpy as np
 import matplotlib.pylab as plt
 from scipy import signal as sig
 
-pointhistory = pickle.load( open("pointhistory.p","rb") )
+pointhistory = pickle.load( open("fast_block.p","rb") )
 
 NTIME = len(pointhistory)
 NY = len(pointhistory[0])
@@ -75,24 +75,31 @@ def strain_history(history, y,x):
     uy0,ux0 = extract_point(history, y,x)
     uy1,ux1 = extract_point(history, y+1,x)
     uy2,ux2 = extract_point(history, y,x+1)
-    plt.plot(range(NTIME),uy0,range(NTIME),uy1)
+    time = np.arange(NTIME)/FPS
+    plt.xlabel('Time (s)')
+    plt.ylabel('Position (pixels)')
+    plt.plot(time,uy0,time,uy1)
     plt.show()
     plt.figure()
-    print uy0.shape
+    
     uy0 = sig.wiener(uy0,mysize=7)
     ux0 = sig.wiener(ux0,mysize=7)
     uy1 = sig.wiener(uy1,mysize=7)
     ux1 = sig.wiener(ux1,mysize=7)
     uy2 = sig.wiener(uy2,mysize=7)
     ux2 = sig.wiener(ux2,mysize=7)
-    print uy0
-    print uy0.shape
-    print uy1
-    plt.plot(range(NTIME),uy0,range(NTIME),uy1)
+    
+    plt.xlabel('Time (s)')
+    plt.ylabel('Position (pixels)')
+    plt.plot(time,uy0,time,uy1)
     plt.show()
     plt.figure()
+    plt.xlabel('Time (s)')
+    plt.ylabel('% Strain')
     eyy = calculate_strains(ux0,uy0, ux1,uy1)
     exx = calculate_strains(ux0,uy0, ux2,uy2)
-    plt.plot(range(NTIME),exx, range(NTIME),eyy)
+    plt.plot(time,100*exx, label='exx')
+    plt.plot(time,100*eyy,label='eyy')
+    plt.legend(loc=3)
     plt.show()
     
